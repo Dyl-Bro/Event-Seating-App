@@ -15,7 +15,7 @@ const seatArrangementSchema = mongoose.Schema({
     tables: [{
         type: mongoose.Types.ObjectId,
         ref: 'Table',
-        erquired: true
+        required: true
     }]
 })
 

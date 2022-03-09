@@ -28,16 +28,19 @@ app.use(`${api}/seatArrangementRoute`, seatArrangementRouter);
 
 
 
-app.listen(4000, function() {
-    console.log(api);
-    console.log("EVENT SEATING APP SERVER IS LISTENING FOR REQUESTS ON PORT 4000");
-});
-mongoose.connect(process.env.CONNECTION_STRING)//call mongoose.connect and pass connection string as parameter
-.then(()=> {
+// app.listen(4000, function() {
+//     console.log(api);
+//     console.log("EVENT SEATING APP SERVER IS LISTENING FOR REQUESTS ON PORT 4000");
+// });
+if(process.env.NODE_ENV !== 'test') {
+    mongoose.connect(process.env.CONNECTION_STRING)//call mongoose.connect and pass connection string as parameter
+    .then(()=> {
     console.log('EVENT SEATING DATABASE CONNECTION IS READY')
 })
 .catch((err)=>{
     console.log(err);
 })
+}
+
 
 module.exports = app;

@@ -10,7 +10,10 @@ router.post(`/register`, (req, res) => {
         name : req.body.name,
         email : req.body.email,
         password : bcrypt.hashSync(req.body.password, 10 )
-    }) 
+    })
+    if(req.body.name == null || req.body.password ==null || req.body.email == null){
+        return res.status(400).send('client error, User cannot be registered');
+    } 
     user.save()
     .then((newlyCreatedUser => {
         res.status(200).json(newlyCreatedUser)

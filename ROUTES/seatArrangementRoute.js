@@ -20,6 +20,9 @@ router.post(`/`,  async (req, res) => {
         user: req.body.user,
         tables : resolvedTableIds
     })
+    if(req.body.eventName == null ||req.body.tables == null|| req.body.user == null){
+        return res.status(400).send('client error, cannot be created')
+    }
     seatarrangement = await seatarrangement.save();
 
     if(!seatarrangement){
@@ -28,6 +31,9 @@ router.post(`/`,  async (req, res) => {
     res.send(seatarrangement);
 });
 router.get(`/:userid`, async(req, res) => {
+    if(! req.params.userid.match(/^[0-9a-fA-F]{24}$/)){
+        return res.status(400).send('BAD CLIENT REQUEST, invalid object Id');
+    }
     const userArrangementList = await seatArrangement.find({user: req.params.userid})
     .populate({
         path: 'tables',
@@ -42,6 +48,9 @@ router.get(`/:userid`, async(req, res) => {
 });
 
 router.get(`/:id`, async(req, res) => {
+    if(! req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+        return res.status(400).send('BAD CLIENT REQUEST, invalid object Id');
+    }
     const seatArr = await seatArrangement.findById(req.params.id)
     .populate({
         path: 'tables',
@@ -55,6 +64,9 @@ router.get(`/:id`, async(req, res) => {
     res.send(seatArr);
 });
 router.put(`/:id`, async (req, res) => {
+    if(! req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+        return res.status(400).send('BAD CLIENT REQUEST, invalid object Id');
+    }
     const seatarrangement = await seatArrangement.findByIdAndUpdate(
         req.params.id,
         {
@@ -70,6 +82,9 @@ router.put(`/:id`, async (req, res) => {
 });
 
 router.delete(`/:id`, async (req, res)=> {
+    if(! req.params.id.match(/^[0-9a-fA-F]{24}$/)){
+        return res.status(400).send('BAD CLIENT REQUEST, invalid object Id');
+    }
     seatArrangement.findByIdAndRemove(req.params.id).then(seatarrangement => {
         if(seatarrangement){
             return res.status(200).json({success: true, message: 'Seating Arrangement was successfully deleted'})
