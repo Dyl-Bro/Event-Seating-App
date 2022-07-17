@@ -1,46 +1,44 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const mongoose = require('mongoose');
-const morgan = require('morgan');
-require('dotenv/config');
-const cors = require('cors');
+const mongoose = require("mongoose");
+const morgan = require("morgan");
+require("dotenv/config");
+const cors = require("cors");
 const api = process.env.API_URL;
-const authJwt = require('./HELPERS/jwt');
-const errorHandler = require('./HELPERS/error-handler');
-
+const errorHandler = require("./HELPERS/error-handler");
+const cookieParser = require("cookie-parser");
+const cookieAuthentication = require("./HELPERS/cookieAuth");
 //ROUTE DEFINITION
-const userRouter = require('./ROUTES/userRoute');
-const tableRouter = require('./ROUTES/tableRoute');
-const seatArrangementRouter = require('./ROUTES/seatArrangementRoute');
+const userRouter = require("./ROUTES/userRoute");
+const tableRouter = require("./ROUTES/table2");
+const seatArrangementRouter = require("./ROUTES/seatArr2");
 
 //MIDDLEWEAR
 app.use(express.json());
-app.use(morgan('tiny'));
-app.use(cors());
-app.options('*', cors());
-app.use(authJwt());
+app.use(morgan("tiny"));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+//app.use(authJwt());
+app.use(cookieParser());
 app.use(errorHandler);
 
 //ROUTES
 app.use(`${api}/userRoute`, userRouter);
-app.use(`${api}/tableRoute`, tableRouter);
-app.use(`${api}/seatArrangementRoute`, seatArrangementRouter);
+app.use(`${api}/tableRoute`, cookieAuthentication, tableRouter);
+app.use(
+  `${api}/seatArrangementRoute`,
+  cookieAuthentication,
+  seatArrangementRouter
+);
 
-
-
-// app.listen(4000, function() {
-//     console.log(api);
-//     console.log("EVENT SEATING APP SERVER IS LISTENING FOR REQUESTS ON PORT 4000");
-// });
-if(process.env.NODE_ENV !== 'test') {
-    mongoose.connect(process.env.CONNECTION_STRING)//call mongoose.connect and pass connection string as parameter
-    .then(()=> {
-    console.log('EVENT SEATING DATABASE CONNECTION IS READY')
-})
-.catch((err)=>{
-    console.log(err);
-})
+if (process.env.NODE_ENV !== "test") {
+  mongoose
+    .connect(process.env.CONNECTION_STRING) //call mongoose.connect and pass connection string as parameter
+    .then(() => {
+      console.log("EVENT SEATING DATABASE CONNECTION IS READY");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
-
 
 module.exports = app;

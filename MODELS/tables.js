@@ -1,18 +1,37 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const tableSchema = mongoose.Schema({
-    name: {type: String, required: true},
-    guests: [{
+  tableName: { type: String, required: true },
+  tableGuests: [
+    {
+      firstName: {
         type: String,
-        required: true
-    }]
-})
+        required: true,
+      },
+      lastName: {
+        type: String,
+        required: true,
+      },
+      //relation to the event... ex: father of the bride, boss, competitor, etc.
+      relation: {
+        type: String,
+        required: false,
+        default: "No Description Provided",
+      },
+    },
+  ],
+  event: {
+    type: mongoose.Types.ObjectId,
+    ref: "seatArrangement",
+    required: true,
+  },
+});
 
+tableSchema.virtual("id").get(function () {
+  return this._id.toHexString();
+});
+tableSchema.set("toJSON", {
+  virtuals: true,
+});
 
-tableSchema.virtual('id').get(function(){
-    return this._id.toHexString();
-})
-tableSchema.set('toJSON', {
-    virtuals: true
-})
-exports.Table = mongoose.model('Table', tableSchema);
+exports.Table = mongoose.model("Table", tableSchema);
